@@ -86,7 +86,8 @@ Route::get('articles', function(){
 Route::get('articles', 'ArticleController@index');
 Route::post('articles', 'ArticleController@store');
 Route::get('articles/create', 'ArticleController@create');
-Route::get('articles/{article}', 'ArticleController@show');
+//Below line is an example of named routes. If you want to change the hardcoded url in any time, you can still use the named routes again.
+Route::get('articles/{article}', 'ArticleController@show')->name('articles.show');
 Route::get('articles/{article}/edit', 'ArticleController@edit');
 Route::put('articles/{article}', 'ArticleController@update');
 

@@ -12,7 +12,7 @@ class ArticleController extends Controller
     /*
     public function show($id){
 
-    	$article=Article::find($id);
+    	$article=Article::findorFail($id);
     	//return $article;
 
     	return view('articles.show', [
@@ -20,7 +20,7 @@ class ArticleController extends Controller
     	]);
 
     }*/
-    //Instead of passing id, we can pass Article object itself. Laravel is smart enough to find which id we are looking for and brings it. The argument we pass to the function and the value on controller side should besame
+    //Instead of passing id, we can pass Article object itself. Laravel is smart enough to find which id we are looking for and brings it. The argument we pass to the function and the value on controller side should be same.
     public function show(Article $article){
 
         return view('articles.show', [
@@ -46,40 +46,93 @@ class ArticleController extends Controller
         
         //dd(request()->all());
         
+        /*As we use the data in validated array, we can assign them to a variable $validatedAttributes and then use them wherever we need.
+        $validatedAttributes = request()->validate([
+            'title'=> ['required'], //min:3 , max:255 etc 
+            'body' => 'required',
+            'excerpt' => 'required'
+        ]);*/
         
 
-         //This is the long way to store data
+         /*This is the long way to store data. We can use below code fro refactoring
         $article = new Article();
         $article->title =request('title');
         $article->excerpt =request('excerpt');
         $article->body =request('body');
         $article->save();
+        */
+
+        /*As we have $validatedAtrributes, we don't need to specify every attribute here again. We can just pass $validatedAttributes variable and we are done. 
+        Article::create([
+            'title' => request('title'),
+            'excerpt' => request('excerpt'),
+            'body' => request('body')
+        ]);
+        */
+
+        //Article::create($validatedAttributes);
+
+        /*And this is the inlined version and it's the short version 
+        Article::create(request()->validate([
+            'title'=> ['required'], //min:3 , max:255 etc 
+            'body' => 'required',
+            'excerpt' => 'required'
+        ]));
+        */
+
+        //But this is the shortest version by a seperate validate function
+
+        Article::create($this->validateArticle());
+
         return redirect('/articles');
         
 
     }
 
-    public function edit($id){
-        $article=Article::find($id);
+    public function edit(Article $article){
+        
+        //We have refactored the below code
+        //$article=Article::find($id);
         
         //return view('articles.edit' , ['article'=>$article]);
         return view('articles.edit' , compact('article'));
     }
 
-    public function update($id){
+    public function update(Article $article){
 
-        request()->validate([
+        $article->update($this->validateArticle());
+
+        /*We have build another function for validation because we use it the same in update and store functions.
+        request()->validate([s
             'title'=> ['required'], //min:3 , max:255 etc 
             'body' => 'required',
             'excerpt' => 'required'
         ]);
+        */
 
-        $article=Article::find($id);
+        // removed this code for refactoring $article=Article::find($id);
+        /* Removed the below code for refactoring
         $article->title =request('title');
         $article->excerpt =request('excerpt');
         $article->body =request('body');
         $article->save();
-        return redirect('/articles/' . $article->id);
+        */
         
+        //If we want to use named routes here we can replace the url with the named route as follow
+        //return redirect(route('articles.show',$article));
+        
+        //We can also build a path function in model and use it for routing as follow
+        return redirect($article->path());
+
+        //return redirect('/articles/' . $article->id);
+        
+    }
+
+    protected function validateArticle(){
+        return request()->validate([
+            'title'=> ['required'], //min:3 , max:255 etc 
+            'body' => 'required',
+            'excerpt' => 'required'
+        ]);
     }
 }
