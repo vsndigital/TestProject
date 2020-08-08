@@ -19,4 +19,15 @@ class Article extends Model
     public function path(){
     	return route('articles.show', $this);
     }
+
+    
+    /*Below code is the original but in real life articles belong to authors not users, so we may change it as follows
+    public function user(){
+    	return $this->belongsTo(User::class);
+    }
+    */
+
+    public function author(){
+        return $this->belongsTo(User::class, 'user_id'); //As we changed the function name to author, by default laravel searches for author_id as a foreign key. However there is no foreign key like that. To correct it, we supplied 'user_id' as an argument and now it works
+    }
 }

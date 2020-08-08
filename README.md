@@ -47,3 +47,9 @@ App\Post::first();					##this returns the first record from the table. we can th
 App\Post::where						##However this returns a collection and we can't look inside as we 	
 		('slug', 'first-post')		did above.Instead of get, we can use first. 
 		->get();																
+
+$user=User::find(1) //finds the user with an id=1
+$user->articles  //brings the articles belongs to that user by the "articles" function in User model. Despite it's a function we call it as a property and don't user brackets. 
+
+Article::find(6)->user  //first finds the article with an id of 6 and then brings the related user by calling user function in Article model
+

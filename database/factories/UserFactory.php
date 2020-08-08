@@ -17,6 +17,15 @@ use Illuminate\Support\Str;
 |
 */
 
+/*
+Example to create dummy users:
+
+While you are in tinker, enter the following:
+factory(App\User::class, 5)->create();
+This will create 5 dummy users
+
+*/
+
 $factory->define(User::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
